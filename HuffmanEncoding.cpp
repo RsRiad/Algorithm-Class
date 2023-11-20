@@ -7,9 +7,7 @@ struct MinHeapNode
     char data;
     unsigned freq;
     MinHeapNode *left, *right;
-
     MinHeapNode(char data, unsigned freq)
-
     {
 
         left = right = NULL;
@@ -44,9 +42,7 @@ void HuffmanCodes(char data[], int freq[], int size)
 {
     struct MinHeapNode *left, *right, *top;
 
-    priority_queue<MinHeapNode*, vector<MinHeapNode*>,
-                   compare>
-                   minHeap;
+    priority_queue<MinHeapNode*, vector<MinHeapNode*>,compare>minHeap;
 
     for (int i = 0; i < size; ++i)
         minHeap.push(new MinHeapNode(data[i], freq[i]));

@@ -1,17 +1,15 @@
 #include<bits/stdc++.h>
 #define max  100
-int ans[max];
 using namespace std;
-int findMinCoins(int coins[], int size,  int value)
+int findMinCoins(int coins[], int size,  int value)//          
 {
     int i, count = 0;
 
     for(i = 0; i < size; i++)
     {
-        while(value >= coins[i])
+        while(value >= coins[i])//
         {
             value -= coins[i];
-            ans[count] = coins[i];
             count++;
         }
         if(value == 0) break;
