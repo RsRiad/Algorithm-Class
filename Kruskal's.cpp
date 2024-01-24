@@ -1,104 +1,68 @@
-// Kruskal's algorithm in C++
-
-#include <algorithm>
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
+const int N = 1e5 + 10;
+int parent[N], siz[N];
 
-#define edge pair<int, int>
-
-class Graph
+void make(int v)
 {
-private:
-    vector<pair<int, edge> > G;  // graph
-    vector<pair<int, edge> > T;  // mst
-    int *parent;
-    int V;  // number of vertices/nodes in graph
-public:
-    Graph(int V);
-    void AddWeightedEdge(int u, int v, int w);
-    int find_set(int i);
-    void union_set(int u, int v);
-    void kruskal();
-    void print();
-};
-Graph::Graph(int V)
-{
-    parent = new int[V];
-
-    //i 0 1 2 3 4 5
-    //parent[i] 0 1 2 3 4 5
-    for (int i = 0; i < V; i++)
-        parent[i] = i;
-
-    G.clear();
-    T.clear();
-}
-void Graph::AddWeightedEdge(int u, int v, int w)
-{
-    G.push_back(make_pair(w, edge(u, v)));
-}
-int Graph::find_set(int i)
-{
-    // If i is the parent of itself
-    if (i == parent[i])
-        return i;
-    else
-        // Else if i is not the parent of itself
-        // Then i is not the representative of his set,
-        // so we recursively call Find on its parent
-        return find_set(parent[i]);
+    parent[v] = v;
+    siz[v] = 1;
 }
 
-void Graph::union_set(int u, int v)
+int find(int v)
 {
-    parent[u] = parent[v];
+    if (parent[v] == v) return v;
+    parent[v] = find(parent[v]);
+    return  parent[v];
 }
-void Graph::kruskal()
+
+void unione(int a, int b)
 {
-    int i, uRep, vRep;
-    sort(G.begin(), G.end());  // increasing weight
-    for (i = 0; i < G.size(); i++)
+    a = find(a);
+    b = find(b);
+    if (a != b)
     {
-        uRep = find_set(G[i].second.first);
-        vRep = find_set(G[i].second.second);
-        if (uRep != vRep)
+        if (siz[a] < siz[b])
         {
-            T.push_back(G[i]);  // add to tree
-            union_set(uRep, vRep);
+            swap(a, b);
         }
+        parent[b] = a;
+        siz[a] += siz[b];
     }
 }
-void Graph::print()
-{
-    cout << "Edge :"
-         << " Weight" << endl;
-    for (int i = 0; i < T.size(); i++)
-    {
-        cout << T[i].second.first << " - " << T[i].second.second << " : "
-             << T[i].first;
-        cout << endl;
-    }
-}
+
 int main()
 {
-    Graph g(6);
-    g.AddWeightedEdge(0, 1, 4);
-    g.AddWeightedEdge(0, 2, 4);
-    g.AddWeightedEdge(1, 2, 2);
-    g.AddWeightedEdge(1, 0, 4);
-    g.AddWeightedEdge(2, 0, 4);
-    g.AddWeightedEdge(2, 1, 2);
-    g.AddWeightedEdge(2, 3, 3);
-    g.AddWeightedEdge(2, 5, 2);
-    g.AddWeightedEdge(2, 4, 4);
-    g.AddWeightedEdge(3, 2, 3);
-    g.AddWeightedEdge(3, 4, 3);
-    g.AddWeightedEdge(4, 2, 4);
-    g.AddWeightedEdge(4, 3, 3);
-    g.AddWeightedEdge(5, 2, 2);
-    g.AddWeightedEdge(5, 4, 3);
-    g.kruskal();
-    g.print();
+    int n, m;
+    cin >> n >> m;
+
+    vector<pair<int, pair<int, int>>> edges;
+    for (int i = 0; i < m; i++)
+    {
+        int u, v, wt;
+        cin >> u >> v >> wt;
+        edges.push_back({wt, {u, v}});
+    }
+
+    sort(edges.begin(), edges.end());
+
+    for (int i = 0; i <= n; i++) make(i);
+
+
+    int total_cost = 0;
+
+    for (auto &it : edges)
+    {
+        int wt = it.first;
+        int u = it.second.first;
+        int v = it.second.second;
+        if (find(u) == find(v))continue;
+
+        unione(u, v);
+        total_cost += wt;
+        cout << u << " " << v << endl;
+    }
+    cout << "total cost: " << total_cost;
+
     return 0;
 }
